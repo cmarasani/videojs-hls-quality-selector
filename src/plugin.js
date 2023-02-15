@@ -110,7 +110,7 @@ class HlsQualitySelectorPlugin {
     const levelItems = [];
 
     for (let i = 0; i < levels.length; ++i) {
-      const {width, height} = levels[i];
+      const {width, height, id} = levels[i];
       const pixels = width > height ? height : width;
 
       if (!pixels) {
@@ -121,7 +121,7 @@ class HlsQualitySelectorPlugin {
         return _existingItem.item && _existingItem.item.value === pixels;
       }).length) {
         const levelItem = this.getQualityMenuItem.call(this, {
-          label: pixels + 'p',
+          label: this.setQualityLabel(id) || (pixels + 'p'),
           value: pixels
         });
 
@@ -158,18 +158,46 @@ class HlsQualitySelectorPlugin {
   }
 
   /**
+   * Sets quality label based on id
+   *
+   * @param {string} id - quality level url of media
+   *
+   * @return {string} quality name
+   */
+  setQualityLabel(id) {
+    let label = '';
+
+    if (id && id.indexOf('m3u8')) {
+      if (id.indexOf('lq.m3u8') > -1) {
+        label = 'lq';
+      } else if (id.indexOf('mq.m3u8') > -1) {
+        label = 'mq';
+      } else if (id.indexOf('hq.m3u8') > -1) {
+        label = 'hq';
+      } else if (id.indexOf('xq.m3u8') > -1) {
+        label = 'xq';
+      } else if (id.indexOf('4k.m3u8') > -1) {
+        label = '4k';
+      }
+    }
+
+    return label;
+  }
+
+  /**
    * Sets quality (based on media short side)
    *
    * @param {number} quality - A number representing HLS playlist.
+   * @param {number} label - A label representing HLS playlist.
    */
-  setQuality(quality) {
+  setQuality(quality, label) {
     const qualityList = this.player.qualityLevels();
 
     // Set quality on plugin
     this._currentQuality = quality;
 
     if (this.config.displayCurrentQuality) {
-      this.setButtonInnerText(quality === 'auto' ? quality : `${quality}p`);
+      this.setButtonInnerText(label);
     }
 
     for (let i = 0; i < qualityList.length; ++i) {

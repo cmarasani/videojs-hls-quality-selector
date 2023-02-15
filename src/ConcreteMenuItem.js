@@ -38,7 +38,7 @@ export default class ConcreteMenuItem extends VideoJsMenuItemClass {
     }
 
         // Set this menu item to selected, and set quality.
-    this.plugin.setQuality(this.item.value);
+    this.plugin.setQuality(this.item.value, this.item.label);
     this.selected(true);
 
   }
