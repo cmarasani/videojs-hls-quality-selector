@@ -131,13 +131,13 @@ class HlsQualitySelectorPlugin {
 
     levelItems.sort((current, next) => {
       if ((typeof current !== 'object') || (typeof next !== 'object')) {
-        return -1;
+        return 1;
       }
       if (current.item.value < next.item.value) {
-        return -1;
+        return 1;
       }
       if (current.item.value > next.item.value) {
-        return 1;
+        return -1;
       }
       return 0;
     });
