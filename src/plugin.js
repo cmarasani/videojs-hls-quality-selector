@@ -31,6 +31,45 @@ class HlsQualitySelectorPlugin {
       // Create the quality button.
       this.createQualityButton();
       this.bindPlayerEvents();
+
+      var playerId = this.player.id_;
+      var qualityInterval = setInterval(_ => {
+        /**
+         * If there is no quality to select, clear the interval
+         */
+        if (!options.qualityToPlay) {
+          clearInterval(qualityInterval);
+          return;
+        }
+
+        var qualityMenuSel = '#' + playerId + ' .vjs-quality-selector .vjs-menu ';
+        var selectedQualityLi = document.querySelector(qualityMenuSel + ' .vjs-menu-item.vjs-selected');
+        if (selectedQualityLi) {
+          /**
+           * Once quality list is populated, clear interval and proceed with functinality
+           */
+          clearInterval(qualityInterval);
+
+          var selectedQualitySpan = document.querySelector(qualityMenuSel + ' .vjs-menu-item.vjs-selected .vjs-menu-item-text').innerHTML;
+          var selectedQuality = selectedQualitySpan.replace(/p/i, '');
+          if (selectedQuality != options.qualityToPlay) {
+            /**
+             * loop through all qualities
+             */
+            document.querySelectorAll(qualityMenuSel + ' .vjs-menu-item[role="menuitemradio"]').forEach(node => {
+              /**
+               * check if a particular node innerHTML has the quality level which needs to be played
+               */
+              if(node.innerHTML.indexOf(options.qualityToPlay + 'p') > -1) {
+                /**
+                 * click the node which has the quality as passed while player is configured
+                 */
+                node.click();
+              } 
+            });
+          }
+        }
+      }, 10);
     }
   }
 
